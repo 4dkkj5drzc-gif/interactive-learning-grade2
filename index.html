@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>كتبي التفاعلية ثلاثية الأبعاد — الصف الثاني</title>
+<style>
+:root{--ink:#20352e;--green:#245b49;--sand:#f4eddf;--gold:#c69a55;--paper:#fffdf8}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(140deg,#e9e1d2,#f8f5ee 45%,#e3ebdf);color:var(--ink);font-family:Tahoma,Arial,sans-serif}
+header{padding:22px 5vw;background:#214b3d;color:white;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:clamp(20px,3vw,30px);margin:0}header p{margin:6px 0 0;color:#e4eee7;font-size:14px}
+main{max-width:1200px;margin:auto;padding:28px 18px 60px}
+.intro{text-align:center;margin:10px auto 28px}.intro h2{font-size:26px;margin:0 0 8px}.intro p{color:#63736a;margin:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px}
+.book{background:#fffdf8;border:1px solid #e6ddcc;border-radius:20px;padding:14px;box-shadow:0 12px 32px #334b3518;transition:.25s}
+.book:hover{transform:translateY(-5px);box-shadow:0 18px 36px #334b3528}
+.cover{height:270px;background:#e9e2d5;border-radius:13px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cover img{width:100%;height:100%;object-fit:contain}
+.book h3{margin:14px 4px 5px;font-size:20px}.book p{margin:0 4px 13px;color:#6a766e;font-size:13px}
+button{border:0;border-radius:12px;padding:12px 17px;background:var(--green);color:white;font-size:15px;cursor:pointer}
+button.secondary{background:#e9e1d2;color:#31483c}button:disabled{opacity:.4;cursor:not-allowed}
+.reader{display:none}.reader.active{display:block}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:4px 0 18px}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.stage{background:radial-gradient(ellipse at center,#d9c9a9,#b7a584);border-radius:22px;padding:clamp(12px,3vw,32px);min-height:480px;display:flex;align-items:center;justify-content:center;perspective:1800px;overflow:hidden}
+.book-open{position:relative;width:min(100%,940px);display:grid;grid-template-columns:1fr 1fr;filter:drop-shadow(0 18px 20px #2c271d55);transform-style:preserve-3d}
+.page{background:var(--paper);min-height:440px;position:relative;overflow:hidden;border:1px solid #d8cfbf;display:flex;align-items:center;justify-content:center}
+.page:first-child{border-radius:5px 0 0 5px;box-shadow:inset -12px 0 18px #8b79501a}
+.page:last-child{border-radius:0 5px 5px 0;box-shadow:inset 12px 0 18px #8b79501a}
+.page canvas{width:100%;height:100%;object-fit:contain;display:block}
+.page-number{position:absolute;bottom:8px;color:#8d877b;font-size:12px}
+.turn-next{animation:turnNext .48s ease}.turn-prev{animation:turnPrev .48s ease}
+@keyframes turnNext{0%{transform:rotateY(0)}50%{transform:rotateY(-12deg) translateX(-8px)}100%{transform:rotateY(0)}}
+@keyframes turnPrev{0%{transform:rotateY(0)}50%{transform:rotateY(12deg) translateX(8px)}100%{transform:rotateY(0)}}
+.reader-bottom{display:grid;grid-template-columns:1.3fr .7fr;gap:16px;margin-top:16px}
+.panel{background:#fffdf8;border:1px solid #e7dece;border-radius:16px;padding:16px}
+.panel h3{margin:0 0 8px}.panel p{margin:0;color:#647168;line-height:1.8;font-size:14px}
+.viewer-note{font-size:12px;color:#68756c;margin-top:10px}
+.badge{display:inline-block;background:#f1e6d1;color:#77572b;padding:5px 9px;border-radius:20px;font-size:12px;margin-bottom:9px}
+@media(max-width:700px){.stage{min-height:360px;padding:8px}.page{min-height:330px}.reader-bottom{grid-template-columns:1fr}.book-open{width:100%}}
+</style>
+</head>
+<body>
+<header><div><h1>كتبي التفاعلية ثلاثية الأبعاد</h1><p>الصف الثاني الأساسي — الكتب الأصلية كما وردت في ملفات PDF</p></div><button class="secondary" onclick="showLibrary()">المكتبة</button></header>
+<main>
+<section id="library">
+<div class="intro"><h2>اختاري كتابك</h2><p>افتحي الكتاب، قلّبي صفحاته، وجرّبي وضع العرض المجسّم.</p></div>
+<div class="grid" id="booksGrid"></div>
+</section>
+<section id="reader" class="reader">
+<div class="topbar">
+<div><button class="secondary" onclick="showLibrary()">← العودة للمكتبة</button> <strong id="bookTitle"></strong></div>
+<div class="controls"><button class="secondary" id="prev" onclick="turn(-1)">السابق</button><span id="pageCount">1 / 1</span><button id="next" onclick="turn(1)">التالي</button><button class="secondary" id="mode" onclick="toggle3d()">تفعيل العرض ثلاثي الأبعاد</button></div>
+</div>
+<div class="stage"><div class="book-open" id="bookOpen">
+<div class="page"><canvas id="left"></canvas><span class="page-number" id="leftNum"></span></div>
+<div class="page"><canvas id="right"></canvas><span class="page-number" id="rightNum"></span></div>
+</div></div>
+<div class="reader-bottom">
+<div class="panel"><span class="badge">الكتاب الأصلي</span><h3>تصفّحي صفحات الكتاب</h3><p>تُعرض صفحات ملف PDF الأصلي دون إعادة كتابة النص أو تغيير ترتيب الدروس. استخدمي السابق والتالي للتنقل بين الصفحات.</p></div>
+<div class="panel"><span class="badge">مساحة التفاعل ثلاثي الأبعاد</span><h3>استكشاف الدرس</h3><p id="interactiveInfo">هذا النموذج يجهّز واجهة الاستكشاف. تُضاف المجسمات التفاعلية الخاصة بكل درس بعد تحديد عناصره من صفحات الكتاب، حتى لا نضيف معلومات أو مشاهد غير موجودة في المنهج.</p></div>
+</div>
+<p class="viewer-note">ملاحظة: تأثير تقليب الصفحات ثلاثي الأبعاد في هذا النموذج واجهة تجريبية؛ المجسمات التعليمية الحقيقية تحتاج إعداداً مستقلاً لكل درس وفق محتوى صفحاته.</p>
+</section>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+const books=[
+{key:'arabic',title:'أحب لغتي',file:'books/أحب لغتي.pdf',cover:'books/cls2_uhboolughati_p1_f1_cover.png',desc:'كتاب اللغة العربية — الجزء الأول'},
+{key:'islamic',title:'ديني حياتي',file:'books/ديني حياتي.pdf',cover:'books/dini_hiati_cls2_p1_f1_2_cover.png',desc:'كتاب التربية الإسلامية — الجزء الأول'},
+{key:'social',title:'أنا أشارك',file:'books/أنا أشارك.pdf',cover:'books/أنا_أتشارك_cls2_Identity_Citizenship_P1_معك_cover.png',desc:'كتاب الدراسات الاجتماعية — الجزء الأول'}
+];
+let current=null,pdf=null,page=1,is3d=false,renderToken=0;
+const grid=document.getElementById('booksGrid');
+books.forEach(b=>{const card=document.createElement('article');card.className='book';card.innerHTML=`<div class="cover"><img src="${b.cover}" alt="غلاف ${b.title}"></div><h3>${b.title}</h3><p>${b.desc}</p><button onclick="openBook('${b.key}')">افتحي الكتاب</button>`;grid.appendChild(card)});
+function showLibrary(){document.getElementById('library').style.display='block';document.getElementById('reader').classList.remove('active')}
+async function openBook(key){current=books.find(x=>x.key===key);document.getElementById('library').style.display='none';document.getElementById('reader').classList.add('active');document.getElementById('bookTitle').textContent=current.title;document.getElementById('interactiveInfo').textContent='يُحدّد التفاعل ثلاثي الأبعاد لكل درس بعد تحليل صفحاته: العناصر القابلة للنقر، المجسمات، الشرح والأنشطة.';pdf=await pdfjsLib.getDocument(current.file).promise;page=1;document.getElementById('pageCount').textContent=`1 / ${pdf.numPages}`;await renderPages()}
+async function renderOne(n,canvas,num){const ctx=canvas.getContext('2d');const w=canvas.parentElement.clientWidth; if(n<1||n>pdf.numPages){ctx.clearRect(0,0,canvas.width,canvas.height);num.textContent='';return}const p=await pdf.getPage(n);const v=p.getViewport({scale:1});const scale=Math.min(2.2,(w*1.8)/v.width);const viewport=p.getViewport({scale});canvas.width=viewport.width;canvas.height=viewport.height;await p.render({canvasContext:ctx,viewport}).promise;num.textContent=n}
+async function renderPages(){const token=++renderToken;const left=page%2===0?page:page-1;const right=page%2===0?page+1:page;await renderOne(left,document.getElementById('left'),document.getElementById('leftNum'));if(token!==renderToken)return;await renderOne(right,document.getElementById('right'),document.getElementById('rightNum'));document.getElementById('pageCount').textContent=`${page} / ${pdf.numPages}`;document.getElementById('prev').disabled=page<=1;document.getElementById('next').disabled=page>=pdf.numPages}
+async function turn(d){if(!pdf)return;page=Math.max(1,Math.min(pdf.numPages,page+d*2));const el=document.getElementById('bookOpen');el.classList.remove('turn-next','turn-prev');void el.offsetWidth;el.classList.add(d>0?'turn-next':'turn-prev');await renderPages()}
+function toggle3d(){is3d=!is3d;document.getElementById('mode').textContent=is3d?'إيقاف تأثير العرض المجسّم':'تفعيل العرض ثلاثي الأبعاد';document.getElementById('bookOpen').style.transform=is3d?'rotateX(4deg) rotateY(-2deg)':'none';document.getElementById('bookOpen').style.transition='transform .4s'}
+window.addEventListener('resize',()=>{if(pdf)renderPages()});
+</script>
+</body></html>
