@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>كتابي التفاعلي ثلاثي الأبعاد | لعبتي</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Tahoma,Arial,sans-serif;background:#f3f6f0;color:#23352b}
+header{padding:16px 20px;background:#234b38;color:white;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:20px;margin:0} header p{margin:5px 0 0;font-size:13px;color:#dce9df}
+main{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:14px;padding:14px;max-width:1400px;margin:auto}
+#stage{height:min(72vh,680px);min-height:430px;background:linear-gradient(#b9d7d0,#e8e5cc);border-radius:18px;overflow:hidden;position:relative;box-shadow:0 5px 20px #23352b20}
+#stage canvas{display:block;width:100%;height:100%}
+.panel{background:white;border-radius:18px;padding:18px;box-shadow:0 5px 20px #23352b12}
+.panel h2{font-size:18px;margin:0 0 12px;color:#234b38}
+.panel p{line-height:1.8;font-size:14px}
+button{border:0;border-radius:10px;background:#2d6548;color:white;padding:11px 13px;font-size:14px;cursor:pointer;margin:4px 2px}
+button.secondary{background:#e7efe8;color:#234b38}
+button:hover{filter:brightness(.96)}
+#info{background:#f2f7f1;border-radius:12px;padding:12px;min-height:120px;line-height:1.8;font-size:14px}
+.hint{position:absolute;bottom:12px;right:12px;background:#ffffffdf;padding:8px 12px;border-radius:10px;font-size:12px}
+#loading{position:absolute;inset:0;display:grid;place-items:center;background:#e7efe8;color:#234b38;z-index:2}
+footer{max-width:1400px;margin:0 auto;padding:0 16px 18px;color:#5e6f63;font-size:12px}
+@media(max-width:850px){main{grid-template-columns:1fr}#stage{height:58vh;min-height:360px}.panel{order:2}}
+</style>
+</head>
+<body>
+<header>
+ <div><h1>كتابي التفاعلي ثلاثي الأبعاد</h1><p>اللغة العربية – الصف الثاني | الدرس الأول: لُعبتي</p></div>
+ <div><button class="secondary" id="reset">إعادة المشهد</button><button id="read">استمع إلى النص</button></div>
+</header>
+<main>
+ <section id="stage" aria-label="مشهد ثلاثي الأبعاد">
+  <div id="loading">جارٍ تجهيز المشهد ثلاثي الأبعاد…</div>
+  <div class="hint">اسحبي لتدوير المشهد • قرّبي بإصبعين أو بعجلة الفأرة • اضغطي على العناصر</div>
+ </section>
+ <aside class="panel">
+  <h2>استكشفي المشهد</h2>
+  <p>اضغطي على سعاد أو الدمية أو الفلج أو القنطرة لمعرفة المزيد من عناصر القصة.</p>
+  <div id="info">مرحباً بكِ! ابدئي بالضغط على أحد العناصر داخل المشهد.</div>
+  <h2 style="margin-top:18px">مفردات الدرس</h2>
+  <button class="secondary vocab" data-key="falaj">الفلج</button>
+  <button class="secondary vocab" data-key="bridge">القنطرة</button>
+  <button class="secondary vocab" data-key="water">تيار الماء</button>
+  <h2 style="margin-top:18px">سؤال سريع</h2>
+  <p>أين كانت سعاد تلعب بدميتها؟</p>
+  <button class="secondary answer" data-a="0">عند ساقية الفلج</button>
+  <button class="secondary answer" data-a="1">في المدرسة</button>
+  <div id="feedback" aria-live="polite" style="font-size:13px;margin-top:8px"></div>
+ </aside>
+</main>
+<footer>هذا نموذج توضيحي أولي للمشهد ثلاثي الأبعاد، وليس نسخة نهائية من الكتاب. النص والمفردات مبنية على الصفحتين المرفقتين من درس «لعبتي». يمكن تطوير الشخصيات والمباني إلى مجسمات واقعية أكثر بعد اعتماد التصميم.</footer>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const stage=document.getElementById('stage'), info=document.getElementById('info');
+const scene=new THREE.Scene(); scene.background=new THREE.Color(0xb8d5cf); scene.fog=new THREE.Fog(0xb8d5cf,24,55);
+const camera=new THREE.PerspectiveCamera(48,stage.clientWidth/stage.clientHeight,.1,100);camera.position.set(12,10,17);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(stage.clientWidth,stage.clientHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;stage.appendChild(renderer.domElement);
+const controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,1,0);controls.enableDamping=true;controls.maxPolarAngle=Math.PI/2.05;controls.minDistance=7;controls.maxDistance=30;
+scene.add(new THREE.HemisphereLight(0xffffff,0x71816a,2));
+const sun=new THREE.DirectionalLight(0xfff1d5,2.3);sun.position.set(-8,16,10);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);scene.add(sun);
+function mat(color,rough=.9){return new THREE.MeshStandardMaterial({color,roughness:rough})}
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(60,60),mat(0xc7b88e));ground.rotation.x=-Math.PI/2;ground.position.y=-.08;ground.receiveShadow=true;scene.add(ground);
+function box(name,x,y,z,w,h,d,color,desc){let o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));o.position.set(x,y+h/2,z);o.castShadow=true;o.receiveShadow=true;o.userData={name,desc};scene.add(o);return o}
+function cylinder(name,x,y,z,rt,rb,h,color,desc){let o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,16),mat(color));o.position.set(x,y+h/2,z);o.castShadow=true;o.userData={name,desc};scene.add(o);return o}
+// Falaj channel and flowing water
+box('حافة الفلج',-1,-.01,1,15,.35,3.2,0x9a8968,'حافة حجرية تحيط بمجرى الفلج.');
+let water=new THREE.Mesh(new THREE.BoxGeometry(14,.08,2.1),new THREE.MeshStandardMaterial({color:0x4eabc0,roughness:.25,metalness:.08}));water.position.set(-1,.2,1);water.userData={name:'الفلج',desc:'الفلج مجرى مائي يجري بين المزارع والقرى. في القصة كانت سعاد تلعب بدميتها عند ساقية الفلج.'};scene.add(water);
+// bridge
+box('القنطرة',5,.1,1,3.3,.35,3.5,0x8a795e,'القنطرة ممرّ مقوّس يعبر فوق مجرى الماء. في القصة جرف تيار الماء الدمية باتجاهها.');
+const arch=new THREE.Mesh(new THREE.TorusGeometry(1.35,.23,12,32,Math.PI),mat(0x806f56));arch.rotation.z=Math.PI;arch.position.set(5,.42,-.78);arch.scale.set(1.15,1,1);scene.add(arch);
+// village houses
+function house(x,z,color){
+ box('بيت عُماني',x,0,z,3.1,2.3,2.8,color,'بيت بسيط في القرية العُمانية، يحيط به المكان الزراعي.');
+ let roof=new THREE.Mesh(new THREE.ConeGeometry(2.25,.75,4),mat(0x9c7955));roof.position.set(x,2.68,z);roof.rotation.y=Math.PI/4;roof.castShadow=true;scene.add(roof);
+ box('باب البيت',x,0,z+1.43,.75,1.45,.08,0x68472f,'باب خشبي في أحد بيوت القرية.');
+}
+house(-8,-5,0xd6c4a0);house(-10,0,0xcab58f);house(9,-6,0xd9c7a6);
+// palm trees
+function palm(x,z){cylinder('جذع نخلة',x,0,z,.22,.32,3.8,0x80552f,'نخلة من أشجار البيئة العُمانية.');for(let i=0;i<7;i++){let leaf=new THREE.Mesh(new THREE.ConeGeometry(.28,2.6,6),mat(0x39754a));leaf.position.set(x+Math.cos(i*Math.PI/3.5)*1.05,3.8,z+Math.sin(i*Math.PI/3.5)*1.05);leaf.rotation.z=Math.cos(i*Math.PI/3.5)*.9;leaf.rotation.x=Math.sin(i*Math.PI/3.5)*.9;leaf.scale.y=.45;leaf.castShadow=true;scene.add(leaf)}}
+palm(-12,-8);palm(-7,5);palm(10,4);palm(12,-2);
+// character Suad: simple 3D placeholder human form
+const skin=mat(0x9b684b), dress=mat(0x7c3347), black=mat(0x24201e);
+let body=new THREE.Mesh(new THREE.CapsuleGeometry(.48,.9,5,12),dress);body.position.set(-3,1.05,4);body.castShadow=true;body.userData={name:'سعاد',desc:'هذه شخصية سعاد في مشهد القصة. يمكن تطويرها لاحقاً إلى شخصية عُمانية ثلاثية الأبعاد بملامح وملابس أكثر واقعية.'};scene.add(body);
+let head=new THREE.Mesh(new THREE.SphereGeometry(.38,24,18),skin);head.position.set(-3,1.95,4);head.castShadow=true;head.userData=body.userData;scene.add(head);
+let hair=new THREE.Mesh(new THREE.SphereGeometry(.4,20,16,0,Math.PI*2,0,Math.PI/2),black);hair.position.set(-3,2.08,4);scene.add(hair);
+let arm1=new THREE.Mesh(new THREE.CapsuleGeometry(.12,.65,4,8),dress);arm1.position.set(-3.55,1.2,4.05);arm1.rotation.z=-.7;scene.add(arm1);
+let arm2=arm1.clone();arm2.position.x=-2.45;arm2.rotation.z=.7;scene.add(arm2);
+// doll near the falaj edge
+let dollbody=new THREE.Mesh(new THREE.SphereGeometry(.34,20,16),mat(0xe9c7a3));dollbody.scale.set(.75,1.25,.55);dollbody.position.set(-1.5,.62,3.4);dollbody.castShadow=true;dollbody.userData={name:'الدمية',desc:'دمية سعاد التي كانت تحرص عليها. في القصة انفلتت من يديها وجرفها تيار الماء.'};scene.add(dollbody);
+let dollhead=new THREE.Mesh(new THREE.SphereGeometry(.24,18,14),mat(0xd5a17f));dollhead.position.set(-1.5,1.02,3.4);dollhead.userData=dollbody.userData;scene.add(dollhead);
+// little crops
+for(let i=0;i<30;i++){let x=-13+(i%10)*1.0,z=8+Math.floor(i/10)*1.1;let stem=cylinder('مزروعات القرية',x,0,z,.035,.05,.7,0x477b3f,'مزروعات القرية التي يصل إليها ماء الفلج.');stem.rotation.z=.12}
+const raycaster=new THREE.Raycaster(), pointer=new THREE.Vector2();
+function onPick(e){const r=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-r.left)/r.width)*2-1;pointer.y=-((e.clientY-r.top)/r.height)*2+1;raycaster.setFromCamera(pointer,camera);let hits=raycaster.intersectObjects(scene.children,true);let obj=hits.find(h=>h.object.userData.name)?.object;if(obj){let d=obj.userData;info.innerHTML='<strong>'+d.name+'</strong><br>'+d.desc}}
+renderer.domElement.addEventListener('click',onPick);
+const vocab={falaj:'الفلج: مجرى مائي تقليدي يُستخدم لنقل المياه إلى المزارع والقرى.',bridge:'القنطرة: بناء مقوّس أو ممرّ يُقام فوق مجرى الماء للعبور.',water:'تيار الماء: حركة الماء وجريانه في المجرى.'};
+document.querySelectorAll('.vocab').forEach(b=>b.onclick=()=>info.innerHTML='<strong>'+b.textContent+'</strong><br>'+vocab[b.dataset.key]);
+document.querySelectorAll('.answer').forEach(b=>b.onclick=()=>document.getElementById('feedback').textContent=b.dataset.a==='0'?'أحسنتِ! الإجابة الصحيحة: عند ساقية الفلج.':'حاولي مرة أخرى؛ تذكّري بداية أحداث القصة.');
+document.getElementById('read').onclick=()=>{if(!('speechSynthesis'in window)){info.textContent='ميزة القراءة الصوتية غير مدعومة في هذا المتصفح.';return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance('ذات صباح، قررت سعاد أن تلعب بدميتها عند ساقية الفلج.');u.lang='ar';speechSynthesis.speak(u)};
+document.getElementById('reset').onclick=()=>{camera.position.set(12,10,17);controls.target.set(0,1,0);controls.update();info.textContent='تمت إعادة المشهد. اضغطي على العناصر لاستكشافها.'};
+document.getElementById('loading').remove();
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h)}
+window.addEventListener('resize',resize);
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}animate();
+</script>
+</body></html>
