@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>كتابي التفاعلي | لعبتي</title>
+<style>
+:root{--wine:#713324;--wine2:#8b422e;--cream:#fff8e9;--ink:#33241e;--gold:#d7b47b;--green:#315b43}
+*{box-sizing:border-box}body{margin:0;background:#eee8dc;color:var(--ink);font-family:Tahoma,Arial,sans-serif}
+.top{height:64px;background:#fffaf0;border-bottom:1px solid #dfd1b9;display:flex;align-items:center;justify-content:space-between;padding:0 22px;gap:12px}
+.brand{font-weight:700;color:var(--wine);font-size:18px}.sub{font-size:12px;color:#7a675b;margin-top:4px}.top-actions{display:flex;gap:8px}
+button{font:inherit;cursor:pointer;border:0}.iconbtn{background:var(--wine);color:white;border-radius:50%;width:42px;height:42px;font-size:18px}
+main{max-width:1500px;margin:18px auto;padding:0 16px;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px}
+.scene{position:relative;border-radius:20px;overflow:hidden;min-height:610px;background:#b9c8b7;box-shadow:0 12px 30px #47372b20}
+.scene img{position:absolute;width:100%;height:100%;inset:0;object-fit:cover;object-position:center}
+.scene:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#25150d38,transparent 42%);pointer-events:none}
+.hotspot{position:absolute;z-index:2;transform:translate(-50%,-50%);background:#fff8e9ed;border:2px solid var(--wine2);border-radius:30px;padding:9px 15px;color:#38251e;font-weight:700;box-shadow:0 4px 14px #24150d40;transition:.2s}
+.hotspot:hover{transform:translate(-50%,-50%) scale(1.06);background:white}.hotspot small{display:block;font-weight:400;font-size:10px}
+#suad{left:31%;top:41%}#doll{left:41%;top:54%}#bridge{left:67%;top:46%}#falaj{left:65%;top:76%}
+.scene-label{position:absolute;z-index:2;left:18px;bottom:16px;background:#fff8e9e8;border-radius:14px;padding:10px 14px;font-size:12px;max-width:270px;line-height:1.7}
+.side{background:var(--cream);border:1px solid #e2d2b9;border-radius:20px;padding:18px;box-shadow:0 8px 24px #47372b12;align-self:stretch}
+h1{font-size:25px;color:var(--wine);margin:0 0 6px}.lesson{font-size:13px;color:#806d5c;margin-bottom:18px}
+.menu{display:grid;gap:9px}.menu button{padding:13px 14px;background:#fff;border:1px solid #dfcbb0;border-radius:13px;text-align:right;color:var(--wine);font-weight:700}.menu button.active,.menu button:hover{background:#f0e0c8;border-color:var(--gold)}
+.content{margin-top:16px;padding:14px;background:white;border-radius:14px;min-height:185px;line-height:1.9;font-size:14px;border:1px solid #eee1cf}.content h2{font-size:16px;margin:0 0 8px;color:var(--wine)}
+.controls{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.action{padding:10px 13px;border-radius:10px;background:var(--wine);color:white}.action.light{background:#eadbc4;color:var(--wine)}
+.foot{max-width:1500px;margin:0 auto;padding:0 18px 18px;color:#75685c;font-size:11px;line-height:1.7}
+@media(max-width:900px){main{grid-template-columns:1fr}.scene{min-height:56vw;height:58vh;min-height:390px}.side{order:2}.top{padding:0 12px}.brand{font-size:15px}}
+@media(max-width:520px){.scene{height:440px}.hotspot{font-size:11px;padding:7px 10px}#suad{left:28%;top:38%}#doll{left:40%;top:57%}.side{padding:14px}}
+</style></head>
+<body>
+<header class="top"><div><div class="brand">كتابي التفاعلي</div><div class="sub">اللغة العربية • الصف الثاني الأساسي</div></div><div class="top-actions"><button class="iconbtn" title="الرئيسية" onclick="show('intro')">⌂</button><button class="iconbtn" title="استمع" onclick="speakCurrent()">🔊</button></div></header>
+<main>
+<section class="scene" aria-label="مشهد قصة لعبتي">
+<img src="assets/lesson-scene.png" alt="مشهد واقعي لطفلة ودمية بجانب فلج في قرية عُمانية">
+<button class="hotspot" id="suad" onclick="show('suad')">سعاد<small>اضغطي للتعرّف</small></button>
+<button class="hotspot" id="doll" onclick="show('doll')">الدمية<small>اضغطي للتعرّف</small></button>
+<button class="hotspot" id="bridge" onclick="show('bridge')">القنطرة<small>اضغطي للتعرّف</small></button>
+<button class="hotspot" id="falaj" onclick="show('falaj')">الفلج<small>اضغطي للتعرّف</small></button>
+<div class="scene-label">استكشفي عناصر القصة بالضغط على العلامات الظاهرة في المشهد.</div>
+</section>
+<aside class="side"><h1>لُعْبَتِي</h1><div class="lesson">الدرس الأول • رحلة سعاد مع دميتها</div>
+<nav class="menu"><button id="b-intro" class="active" onclick="show('intro')">📖 قراءة النص</button><button id="b-words" onclick="show('words')">📚 معاني المفردات</button><button id="b-activity" onclick="show('activity')">🧩 أنشطة تفاعلية</button><button id="b-quiz" onclick="show('quiz')">✦ تقويم الدرس</button></nav>
+<div class="content" id="content" aria-live="polite"></div><div class="controls"><button class="action" onclick="speakCurrent()">🔊 استمع</button><button class="action light" onclick="stopSpeech()">إيقاف الصوت</button></div>
+</aside></main>
+<footer class="foot">نموذج تصميم مطوّر لدرس «لعبتي». المشهد المعروض صورة توضيحية واقعية ثابتة مع نقاط تفاعلية، وليس مجسماً ثلاثي الأبعاد قابلاً للدوران بعد. النص مقتبس من الصفحتين المرفقتين (36–37)، ويبدأ المقتطف من منتصف الجملة كما ظهر في الصفحة المتاحة. المفردات والأنشطة الإضافية شروح تعليمية مساعدة.</footer>
+<script>
+const pages={
+intro:{title:'من قصة لعبتي',html:'<p>ذات صباح، قررت سعاد أن تلعب بدميتها عند ساقية الفلج، وطلبت من أمها أن تخيط لها ملابس أخرى، وأخذتها هابطة بها السلم الحجري.</p><p>غمست دميتها وهي تمسكها برفق في تيار الماء الهابط إلى مزروعات القرية. غمرتها بماء الفلج، ولم تدر ما حدث...</p><p>انفلتت الدمية من يديها، جرفها تيار الماء صوب البعيد، ثم أدخلها تحت القنطرة.</p><p>كبرت سعاد وتركت أسرتها القرية، وكانت كلما عادت إليها تهبط إلى الفلج وتجْلس هناك وعيناها صوب القنطرة.</p>',speech:'ذات صباح، قررت سعاد أن تلعب بدميتها عند ساقية الفلج، وطلبت من أمها أن تخيط لها ملابس أخرى، وأخذتها هابطة بها السلم الحجري. غمست دميتها وهي تمسكها برفق في تيار الماء الهابط إلى مزروعات القرية. غمرتها بماء الفلج، ولم تدر ما حدث. انفلتت الدمية من يديها، جرفها تيار الماء صوب البعيد، ثم أدخلها تحت القنطرة. كبرت سعاد وتركت أسرتها القرية، وكانت كلما عادت إليها تهبط إلى الفلج وتجْلس هناك وعيناها صوب القنطرة.'},
+suad:{title:'سعاد',html:'<p>سعاد هي الشخصية الرئيسة في القصة. كانت تحب دميتها وتحرص عليها، ثم أخذتها لتلعب بها عند ساقية الفلج.</p>',speech:'سعاد هي الشخصية الرئيسة في القصة. كانت تحب دميتها وتحرص عليها.'},doll:{title:'الدمية',html:'<p>دمية سعاد التي كانت تحرص عليها. في أحداث القصة انفلتت من يديها وجرفها تيار الماء.</p>',speech:'دمية سعاد التي كانت تحرص عليها. انفلتت من يديها وجرفها تيار الماء.'},bridge:{title:'القنطرة',html:'<p>القنطرة ممرّ أو بناء يعبر فوق مجرى الماء. في القصة وصل تيار الماء بالدمية إلى تحت القنطرة.</p>',speech:'القنطرة ممر أو بناء يعبر فوق مجرى الماء.'},falaj:{title:'الفلج',html:'<p>الفلج مجرى مائي يجري بين القرية ومزروعاتها. اختارت سعاد أن تلعب بدميتها عند ساقية الفلج.</p>',speech:'الفلج مجرى مائي يجري بين القرية ومزروعاتها.'},words:{title:'معاني المفردات',html:'<p><b>الفلج:</b> مجرى مائي يُستخدم لنقل الماء.</p><p><b>القنطرة:</b> ممر أو بناء فوق مجرى الماء.</p><p><b>تيار الماء:</b> حركة الماء وجريانه.</p><p><b>بلا جدوى:</b> دون فائدة أو نتيجة.</p>',speech:'الفلج: مجرى مائي يستخدم لنقل الماء. القنطرة: ممر أو بناء فوق مجرى الماء. تيار الماء: حركة الماء وجريانه. بلا جدوى: دون فائدة أو نتيجة.'},
+activity:{title:'نشاط تفاعلي',html:'<p>رتّبي أحداث القصة ذهنياً:</p><ol><li>ذهبت سعاد إلى ساقية الفلج.</li><li>انفلتت الدمية من يديها.</li><li>جرف تيار الماء الدمية نحو القنطرة.</li></ol><p>اضغطي على عناصر المشهد لتتعرفي على دور كل عنصر.</p>',speech:'نشاط تفاعلي. رتبي أحداث القصة: ذهبت سعاد إلى ساقية الفلج، ثم انفلتت الدمية من يديها، ثم جرف تيار الماء الدمية نحو القنطرة.'},
+quiz:{title:'تقويم الدرس',html:'<p><b>أين قررت سعاد أن تلعب بدميتها؟</b></p><div class="quizopts"><button class="action light" onclick="answer(0)">عند ساقية الفلج</button> <button class="action light" onclick="answer(1)">في المدرسة</button> <button class="action light" onclick="answer(2)">في السوق</button></div><p id="feedback"></p>',speech:'سؤال التقويم: أين قررت سعاد أن تلعب بدميتها؟'}
+};let current='intro';
+function show(key){current=key;document.getElementById('content').innerHTML='<h2>'+pages[key].title+'</h2>'+pages[key].html;document.querySelectorAll('.menu button').forEach(x=>x.classList.remove('active'));let map={intro:'b-intro',words:'b-words',activity:'b-activity',quiz:'b-quiz'};if(map[key])document.getElementById(map[key]).classList.add('active')}
+function speakCurrent(){if(!('speechSynthesis'in window)){alert('القراءة الصوتية غير مدعومة في هذا المتصفح.');return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(pages[current].speech||'');u.lang='ar';speechSynthesis.speak(u)}function stopSpeech(){if('speechSynthesis'in window)speechSynthesis.cancel()}
+function answer(n){document.getElementById('feedback').textContent=n===0?'أحسنتِ! إجابة صحيحة.':'حاولي مرة أخرى، وابحثي عن الإجابة في بداية القصة.'}
+show('intro');
+</script></body></html>
